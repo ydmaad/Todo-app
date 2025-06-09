@@ -53,6 +53,34 @@ function createTodoElement(item) {
   removeBtnEl.classList.add("remove-btn");
   removeBtnEl.innerText = "🗑️";
 
+  inputEl.addEventListener("input", () => {
+    item.text = inputEl.value;
+  });
+
+  inputEl.addEventListener("blur", () => {
+    inputEl.setAttribute("disabled", "");
+  });
+
+  checkboxEl.addEventListener("change", () => {
+    item.complete = checkboxEl.checked;
+
+    if (item.complete) {
+      itemEl.classList.add("complete");
+    } else {
+      itemEl.classList.remove("complete");
+    }
+  });
+
+  editBtnEl.addEventListener("click", () => {
+    inputEl.removeAttribute("disabled");
+    inputEl.focus();
+  });
+
+  removeBtnEl.addEventListener("click", () => {
+    todos.filter((t) => t.id !== item.id);
+    itemEl.remove();
+  });
+
   actionsEl.append(editBtnEl);
   actionsEl.append(removeBtnEl);
 
