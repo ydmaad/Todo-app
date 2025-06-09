@@ -24,6 +24,7 @@ function createNewTodo() {
   inputEl.removeAttribute("disabled");
 
   inputEl.focus();
+  saveToLocalStorage();
 }
 
 function createTodoElement(item) {
@@ -32,6 +33,7 @@ function createTodoElement(item) {
 
   const checkboxEl = document.createElement("input");
   checkboxEl.type = "checkbox";
+  checkboxEl.checked = item.complete;
 
   if (item.complete) {
     itemEl.classList.add("complete");
@@ -59,6 +61,7 @@ function createTodoElement(item) {
 
   inputEl.addEventListener("blur", () => {
     inputEl.setAttribute("disabled", "");
+    saveToLocalStorage();
   });
 
   checkboxEl.addEventListener("change", () => {
@@ -69,6 +72,7 @@ function createTodoElement(item) {
     } else {
       itemEl.classList.remove("complete");
     }
+    saveToLocalStorage();
   });
 
   editBtnEl.addEventListener("click", () => {
@@ -77,8 +81,9 @@ function createTodoElement(item) {
   });
 
   removeBtnEl.addEventListener("click", () => {
-    todos.filter((t) => t.id !== item.id);
+    todos = todos.filter((t) => t.id !== item.id);
     itemEl.remove();
+    saveToLocalStorage();
   });
 
   actionsEl.append(editBtnEl);
@@ -90,3 +95,29 @@ function createTodoElement(item) {
 
   return { itemEl, inputEl, editBtnEl, removeBtnEl };
 }
+
+function saveToLocalStorage() {
+  const data = JSON.stringify(todos);
+
+  window.localStorage.setItem("my_todos", data);
+}
+
+function loadFromLocalStorage() {
+  const data = localStorage.getItem("my_todos");
+
+  if (data) {
+    todos = JSON.parse(data);
+  }
+}
+
+function displayTodos() {
+  loadFromLocalStorage();
+  for (let i = 0; i < todos.length; i++) {
+    const item = todos[i];
+    const { itemEl } = createTodoElement(item);
+
+    list.append(itemEl);
+  }
+}
+
+displayTodos();
